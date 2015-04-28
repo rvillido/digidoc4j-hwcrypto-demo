@@ -22,6 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<start-class>ee.sk.hwcrypto.demo.DssHwcryptoWebappApplication</start-class>
 		<java.version>1.8</java.version>
+		<dss.version>4.4.RC2</dss.version>
 	</properties>
 
 	<dependencies>
@@ -39,6 +40,29 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
+			<artifactId>dss-webservices-client</artifactId>
+			<version>${dss.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
+			<artifactId>dss-document</artifactId>
+			<version>${dss.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
+			<artifactId>dss-spi</artifactId>
+			<version>${dss.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
@@ -49,5 +73,13 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>joinup</id>
+			<name>Joinup</name>
+			<url>https://joinup.ec.europa.eu/nexus/content/repositories/releases/</url>
+		</repository>
+	</repositories>
 
 </project>
