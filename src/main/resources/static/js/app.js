@@ -85,11 +85,11 @@ post = function(url, data) {
 };
 
 fetchHash = function(certInHex) {
-    return post("/generateHash", {certInHex:certInHex})
+    return post("generateHash", {certInHex:certInHex})
 };
 
 createContainer = function(signatureInHex) {
-    return post("/createContainer", {signatureInHex:signatureInHex});
+    return post("createContainer", {signatureInHex:signatureInHex});
 };
 
 sign = function() {

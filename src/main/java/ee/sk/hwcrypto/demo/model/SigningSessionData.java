@@ -6,9 +6,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class SigningSessionData {
+public class SigningSessionData implements Serializable {
 
     private WsDocument signatureContainer;
     private WsParameters signatureParameters;
