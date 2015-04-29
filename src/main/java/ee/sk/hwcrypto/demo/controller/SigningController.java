@@ -5,6 +5,8 @@ import ee.sk.hwcrypto.demo.model.FileWrapper;
 import ee.sk.hwcrypto.demo.model.Result;
 import ee.sk.hwcrypto.demo.model.SigningSessionData;
 import ee.sk.hwcrypto.demo.signature.FileSigner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,9 +19,9 @@ import java.io.IOException;
 @RestController
 public class SigningController {
 
+    private static final Logger log = LoggerFactory.getLogger(SigningController.class);
     @Autowired
     private SigningSessionData session;
-
     @Autowired
     private FileSigner signer;
 
@@ -29,7 +31,7 @@ public class SigningController {
             session.setUploadedFile(FileWrapper.create(file));
             return Result.resultOk();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error reading bytes from uploaded file " + file.getOriginalFilename(), e);
         }
         return Result.resultUploadingError();
     }
@@ -43,7 +45,7 @@ public class SigningController {
             digest.setHex(signer.getDataToSign(file.getBytes(), file.getFileName(), certInHex));
             digest.setResult(Result.OK);
         } catch (FileSigner.HashCalculationException e) {
-            e.printStackTrace();
+            log.error("Error Calculating hash", e);
             digest.setResult(Result.ERROR_GENERATING_HASH);
         }
         return digest;
@@ -56,7 +58,7 @@ public class SigningController {
             session.setSignedFile(signer.signDocument(signatureInHex));
             return Result.resultOk();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error Signing document", e);
         }
         return Result.resultSigningError();
     }
