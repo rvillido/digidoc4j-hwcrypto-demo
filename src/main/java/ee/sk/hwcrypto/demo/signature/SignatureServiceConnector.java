@@ -25,6 +25,21 @@ public class SignatureServiceConnector {
         }
     }
 
+    public WsDocument signDocument(WsDocument document, WsParameters parameters, byte[] signature) throws SigningFailedException {
+        try {
+            SignatureService_Service.setROOT_SERVICE_URL(DSS_URL);
+            SignatureService_Service signatureService_service = new SignatureService_Service();
+            SignatureService signatureServiceImplPort = signatureService_service.getSignatureServiceImplPort();
+            return signatureServiceImplPort.signDocument(document, parameters, signature);
+        } catch (DSSException_Exception e) {
+            log.error("Failed to sign document in DSS Web Service", e);
+            throw new SigningFailedException();
+        }
+    }
+
     public static class GettingDataToSignException extends RuntimeException {
+    }
+
+    public static class SigningFailedException extends RuntimeException {
     }
 }

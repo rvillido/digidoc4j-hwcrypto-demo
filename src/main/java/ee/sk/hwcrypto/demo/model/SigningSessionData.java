@@ -1,5 +1,7 @@
 package ee.sk.hwcrypto.demo.model;
 
+import eu.europa.ec.markt.dss.ws.signature.WsDocument;
+import eu.europa.ec.markt.dss.ws.signature.WsParameters;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -8,12 +10,30 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class SigningSessionData {
 
+    private WsDocument signatureContainer;
+    private WsParameters signatureParameters;
     private byte[] file;
     private String fileName;
     private String fileContentType;
     private String certInHex;
     private String signatureInHex;
     private String digestInHex;
+
+    public WsDocument getSignatureContainer() {
+        return signatureContainer;
+    }
+
+    public void setSignatureContainer(WsDocument signatureContainer) {
+        this.signatureContainer = signatureContainer;
+    }
+
+    public WsParameters getSignatureParameters() {
+        return signatureParameters;
+    }
+
+    public void setSignatureParameters(WsParameters signatureParameters) {
+        this.signatureParameters = signatureParameters;
+    }
 
     public String getFileName() {
         return fileName;
