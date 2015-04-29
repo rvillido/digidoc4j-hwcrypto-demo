@@ -60,7 +60,11 @@ post = function(url, data) {
             type: "POST",
             data: data
         }).done(function(data) {
-            resolve(data);
+            if(data.result != "ok") {
+                reject(Error(data.result))
+            } else {
+                resolve(data);
+            }
         }).fail(function() {
             reject(Error("Post operation failed"));
         });
