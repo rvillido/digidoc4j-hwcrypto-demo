@@ -10,11 +10,9 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class SigningSessionData {
 
+    private FileWrapper file;
     private WsDocument signatureContainer;
     private WsParameters signatureParameters;
-    private byte[] file;
-    private String fileName;
-    private String fileContentType;
     private String certInHex;
     private String signatureInHex;
     private String digestInHex;
@@ -35,28 +33,12 @@ public class SigningSessionData {
         this.signatureParameters = signatureParameters;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public byte[] getFile() {
+    public FileWrapper getFile() {
         return file;
     }
 
-    public void setFile(byte[] file) {
+    public void setFile(FileWrapper file) {
         this.file = file;
-    }
-
-    public String getFileContentType() {
-        return fileContentType;
-    }
-
-    public void setFileContentType(String fileContentType) {
-        this.fileContentType = fileContentType;
     }
 
     public String getCertInHex() {

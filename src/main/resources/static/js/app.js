@@ -55,6 +55,7 @@ showDownloadSection = function() {
 post = function(url, data) {
     return new Promise(function(resolve, reject) {
         $.ajax({
+            dataType: "json",
             url: url,
             type: "POST",
             data: data
@@ -79,8 +80,8 @@ sign = function() {
     window.hwcrypto.getCertificate({lang: 'en'}).then(function(certificate) {
         cert = certificate;
         return fetchHash(certificate.hex);
-    }).then(function(hash) {
-        return window.hwcrypto.sign(cert, {type: 'SHA-256', hex: hash}, {lang: 'en'});
+    }).then(function(digest) {
+        return window.hwcrypto.sign(cert, {type: 'SHA-256', hex: digest.hex}, {lang: 'en'});
     }).then(function(signature) {
         return createContainer(signature.hex);
     }).then(function(result) {
