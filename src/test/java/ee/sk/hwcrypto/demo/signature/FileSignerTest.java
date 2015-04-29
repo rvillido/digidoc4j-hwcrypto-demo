@@ -1,5 +1,6 @@
 package ee.sk.hwcrypto.demo.signature;
 
+import ee.sk.hwcrypto.demo.model.FileWrapper;
 import ee.sk.hwcrypto.demo.model.SigningSessionData;
 import eu.europa.ec.markt.dss.ws.signature.MimeType;
 import eu.europa.ec.markt.dss.ws.signature.WsDocument;
@@ -45,10 +46,10 @@ public class FileSignerTest {
         signedDocument.setName("test.name");
         signedDocument.setMimeType(createMimeType("mime/type"));
         signedDocument.setBytes("testData".getBytes());
-        SignedFile signedFile = fileSigner.signDocument(SIGNATURE_IN_HEX);
-        assertEquals("test.name", signedFile.getFileName());
-        assertEquals("mime/type", signedFile.getMimeType());
-        assertArrayEquals("testData".getBytes(), signedFile.getFileBytes());
+        FileWrapper fileWrapper = fileSigner.signDocument(SIGNATURE_IN_HEX);
+        assertEquals("test.name", fileWrapper.getFileName());
+        assertEquals("mime/type", fileWrapper.getMimeType());
+        assertArrayEquals("testData".getBytes(), fileWrapper.getBytes());
     }
 
     @Test
@@ -57,8 +58,8 @@ public class FileSignerTest {
         String fileName = "test.txt";
         String dataToSign = fileSigner.getDataToSign(fileBytes, fileName, TEST_CERT);
         assertEquals(HASH_TO_SIGN_IN_HEX, dataToSign);
-        SignedFile signedFile = fileSigner.signDocument(SIGNATURE_IN_HEX);
-        assertNotNull(signedFile);
+        FileWrapper fileWrapper = fileSigner.signDocument(SIGNATURE_IN_HEX);
+        assertNotNull(fileWrapper);
         assertSame(sessionData.getSignatureContainer(), signatureServiceConnectorSpy.usedDocument);
         assertSame(sessionData.getSignatureParameters(), signatureServiceConnectorSpy.usedParameters);
     }

@@ -22,9 +22,8 @@ public class ViewController {
 
     @RequestMapping("/downloadContainer")
     public void downloadContainer(HttpServletResponse response) {
-        //TODO: Replace with actual generated container... Just return the uploaded file for now
-        FileWrapper file = session.getFile();
-        response.setContentType(file.getFileContentType());
+        FileWrapper file = session.getSignedFile();
+        response.setContentType(file.getMimeType());
         response.setHeader("Content-Disposition", "attachment; filename=" + file.getFileName());
         try {
             response.getOutputStream().write(file.getBytes());

@@ -5,7 +5,6 @@ import ee.sk.hwcrypto.demo.model.FileWrapper;
 import ee.sk.hwcrypto.demo.model.Result;
 import ee.sk.hwcrypto.demo.model.SigningSessionData;
 import ee.sk.hwcrypto.demo.signature.FileSigner;
-import eu.europa.ec.markt.dss.ws.signature.DSSException_Exception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,9 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 
 @RestController
 public class SigningController {
@@ -30,7 +26,7 @@ public class SigningController {
     @RequestMapping(value="/upload", method= RequestMethod.POST)
     public Result handleUpload(@RequestParam MultipartFile file) {
         try {
-            session.setFile(new FileWrapper(file.getBytes(), file.getOriginalFilename(), file.getContentType()));
+            session.setUploadedFile(FileWrapper.create(file));
             return Result.resultOk();
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,12 +37,12 @@ public class SigningController {
     @RequestMapping(value="/generateHash", method = RequestMethod.POST)
     public Digest generateHash(@RequestParam String certInHex) {
         session.setCertInHex(certInHex);
-        FileWrapper file = session.getFile();
+        FileWrapper file = session.getUploadedFile();
         Digest digest = new Digest();
         try {
             digest.setHex(signer.getDataToSign(file.getBytes(), file.getFileName(), certInHex));
             digest.setResult(Result.OK);
-        } catch (UnsupportedEncodingException | DSSException_Exception | NoSuchProviderException | NoSuchAlgorithmException e) {
+        } catch (FileSigner.HashCalculationException e) {
             e.printStackTrace();
             digest.setResult(Result.ERROR_GENERATING_HASH);
         }
@@ -56,12 +52,13 @@ public class SigningController {
     @RequestMapping(value="/createContainer", method = RequestMethod.POST)
     public Result createContainer(@RequestParam String signatureInHex) {
         session.setSignatureInHex(signatureInHex);
-        return Result.resultOk();
-    }
-
-    @RequestMapping("/getOk")
-    public Result getOk() {
-        return Result.resultOk();
+        try {
+            session.setSignedFile(signer.signDocument(signatureInHex));
+            return Result.resultOk();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.resultSigningError();
     }
 
 }

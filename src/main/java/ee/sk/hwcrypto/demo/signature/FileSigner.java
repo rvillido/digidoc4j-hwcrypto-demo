@@ -1,5 +1,6 @@
 package ee.sk.hwcrypto.demo.signature;
 
+import ee.sk.hwcrypto.demo.model.FileWrapper;
 import ee.sk.hwcrypto.demo.model.SigningSessionData;
 import eu.europa.ec.markt.dss.DSSXMLUtils;
 import eu.europa.ec.markt.dss.signature.DSSDocument;
@@ -40,12 +41,12 @@ public class FileSigner {
         return dataToSignInHex;
     }
 
-    public SignedFile signDocument(String signatureInHex) {
+    public FileWrapper signDocument(String signatureInHex) {
         WsDocument containerToSign = sessionData.getSignatureContainer();
         WsParameters signatureParameters = sessionData.getSignatureParameters();
         byte[] signatureBytes = DatatypeConverter.parseHexBinary(signatureInHex);
         WsDocument signedDocument = signatureServiceConnector.signDocument(containerToSign, signatureParameters, signatureBytes);
-        return SignedFile.create(signedDocument);
+        return FileWrapper.create(signedDocument);
     }
 
     private WsDocument createContainerToSign(byte[] fileBytes, String fileName) {
