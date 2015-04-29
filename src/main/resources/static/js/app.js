@@ -1,6 +1,8 @@
 $(document).on('change', '.btn-file :file', function() {
     var input = $(this),
         label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+    disableSign();
+    hideDownloadSection();
     $("#fileName").val(label);
     $('#fileUpload').submit();
 });
@@ -42,12 +44,23 @@ $(document).ready(function() {
 });
 
 enableSign = function() {
-    $("#signButton").addClass("btn-success").enable();
+    $("#signButton").addClass("btn-success").prop('disabled', false);;
+};
+
+disableSign = function() {
+    $("#signButton").removeClass("btn-success").prop('disabled', true);;
 };
 
 showDownloadSection = function() {
     var downloadSection = $("#downloadSection");
     if(downloadSection.hasClass("hidden")) {
+        downloadSection.toggleClass("show hidden");
+    }
+};
+
+hideDownloadSection = function() {
+    var downloadSection = $("#downloadSection");
+    if(downloadSection.hasClass("show")) {
         downloadSection.toggleClass("show hidden");
     }
 };
