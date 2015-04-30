@@ -30,8 +30,8 @@ public class FileSigner {
     @Autowired
     SigningSessionData sessionData;
 
-    public String getDataToSign(byte[] fileBytes, String fileName, String certificateInHex) {
-        WsDocument containerToSign = createContainerToSign(fileBytes, fileName);
+    public String getDataToSign(FileWrapper fileToSign, String certificateInHex) {
+        WsDocument containerToSign = createContainerToSign(fileToSign);
         WsParameters signatureParameters = createSignatureParameters(certificateInHex);
         byte[] dataToSign = signatureServiceConnector.getDataToSign(containerToSign, signatureParameters);
         byte[] hashToSign = calculateHash(dataToSign, DIGEST_ALGORITHM);
@@ -49,13 +49,13 @@ public class FileSigner {
         return FileWrapper.create(signedDocument);
     }
 
-    private WsDocument createContainerToSign(byte[] fileBytes, String fileName) {
-        DSSDocument fileToSign = new InMemoryDocument(fileBytes, fileName);
+    private WsDocument createContainerToSign(FileWrapper fileToSign) {
+        DSSDocument documentToSign = new InMemoryDocument(fileToSign.getBytes(), fileToSign.getFileName());
         WsDocument container = new WsDocument();
-        container.setBytes(fileToSign.getBytes());
-        container.setName(fileToSign.getName());
-        container.setAbsolutePath(fileToSign.getAbsolutePath());
-        MimeType mimeType = fileToSign.getMimeType();
+        container.setBytes(documentToSign.getBytes());
+        container.setName(documentToSign.getName());
+        container.setAbsolutePath(documentToSign.getAbsolutePath());
+        MimeType mimeType = documentToSign.getMimeType();
         eu.europa.ec.markt.dss.ws.signature.MimeType wsMimeType = FACTORY.createMimeType();
         String mimeTypeString = mimeType.getMimeTypeString();
         wsMimeType.setMimeTypeString(mimeTypeString);
@@ -68,7 +68,7 @@ public class FileSigner {
         parameters.setSignatureLevel(SignatureLevel.ASiC_E_BASELINE_B);
         parameters.setSignaturePackaging(SignaturePackaging.DETACHED);
         parameters.setEncryptionAlgorithm(EncryptionAlgorithm.RSA);
-        parameters.setAsicMimeType("application/vnd.etsi.asic-e+zip");
+        parameters.setAsicMimeType(MimeType.ASICE.getMimeTypeString());
         parameters.setDigestAlgorithm(DIGEST_TYPE);
         parameters.setSigningDate(DSSXMLUtils.createXMLGregorianCalendar(new Date()));
         byte[] certificateBytes = DatatypeConverter.parseHexBinary(certificateInHex);

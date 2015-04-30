@@ -4,8 +4,9 @@ import eu.europa.ec.markt.dss.ws.signature.WsDocument;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public class FileWrapper {
+public class FileWrapper implements Serializable{
     private byte[] bytes;
     private String fileName;
     private String mimeType;

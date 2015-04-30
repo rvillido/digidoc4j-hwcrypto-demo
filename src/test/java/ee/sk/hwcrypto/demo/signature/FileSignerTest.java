@@ -33,9 +33,8 @@ public class FileSignerTest {
 
     @Test
     public void testGettingDataToSign() throws Exception {
-        byte[] fileBytes = "Test data to sign".getBytes();
-        String fileName = "test.txt";
-        String dataToSign = fileSigner.getDataToSign(fileBytes, fileName, TEST_CERT);
+        FileWrapper file = createFile("test.txt", "Test data to sign");
+        String dataToSign = fileSigner.getDataToSign(file, TEST_CERT);
         assertEquals(HASH_TO_SIGN_IN_HEX, dataToSign);
         assertNotNull(sessionData.getSignatureContainer());
         assertNotNull(sessionData.getSignatureParameters());
@@ -54,14 +53,20 @@ public class FileSignerTest {
 
     @Test
     public void testSigningDocument() throws Exception {
-        byte[] fileBytes = "Test data to sign".getBytes();
-        String fileName = "test.txt";
-        String dataToSign = fileSigner.getDataToSign(fileBytes, fileName, TEST_CERT);
+        FileWrapper file = createFile("test.txt", "Test data to sign");
+        String dataToSign = fileSigner.getDataToSign(file, TEST_CERT);
         assertEquals(HASH_TO_SIGN_IN_HEX, dataToSign);
         FileWrapper fileWrapper = fileSigner.signDocument(SIGNATURE_IN_HEX);
         assertNotNull(fileWrapper);
         assertSame(sessionData.getSignatureContainer(), signatureServiceConnectorSpy.usedDocument);
         assertSame(sessionData.getSignatureParameters(), signatureServiceConnectorSpy.usedParameters);
+    }
+
+    private FileWrapper createFile(String name, String data) {
+        FileWrapper file = new FileWrapper();
+        file.setBytes(data.getBytes());
+        file.setFileName(name);
+        return file;
     }
 
     private MimeType createMimeType(String mimeTypeString) {

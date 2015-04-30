@@ -5,6 +5,7 @@ import ee.sk.hwcrypto.demo.model.FileWrapper;
 import ee.sk.hwcrypto.demo.model.Result;
 import ee.sk.hwcrypto.demo.model.SigningSessionData;
 import ee.sk.hwcrypto.demo.signature.FileSigner;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class SigningController {
 
     @RequestMapping(value="/upload", method= RequestMethod.POST)
     public Result handleUpload(@RequestParam MultipartFile file) {
+        log.debug("Handling file upload for file "+file.getOriginalFilename());
         try {
             session.setUploadedFile(FileWrapper.create(file));
             return Result.resultOk();
@@ -38,11 +40,12 @@ public class SigningController {
 
     @RequestMapping(value="/generateHash", method = RequestMethod.POST)
     public Digest generateHash(@RequestParam String certInHex) {
+        log.debug("Generating hash from cert " + StringUtils.left(certInHex, 10) + "...");
         session.setCertInHex(certInHex);
         FileWrapper file = session.getUploadedFile();
         Digest digest = new Digest();
         try {
-            digest.setHex(signer.getDataToSign(file.getBytes(), file.getFileName(), certInHex));
+            digest.setHex(signer.getDataToSign(file, certInHex));
             digest.setResult(Result.OK);
         } catch (FileSigner.HashCalculationException e) {
             log.error("Error Calculating hash", e);
@@ -53,6 +56,7 @@ public class SigningController {
 
     @RequestMapping(value="/createContainer", method = RequestMethod.POST)
     public Result createContainer(@RequestParam String signatureInHex) {
+        log.debug("Creating container for signature " + StringUtils.left(signatureInHex, 10) + "...");
         session.setSignatureInHex(signatureInHex);
         try {
             session.setSignedFile(signer.signDocument(signatureInHex));
