@@ -1,3 +1,5 @@
+// JavaScript library as described in
+// https://github.com/open-eid/hwcrypto.js
 // FIXME: origin unknown
 if (!window.atob) {
   var tableStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";

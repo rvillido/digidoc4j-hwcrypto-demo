@@ -1,5 +1,5 @@
-/*! This is hwcrypto.js 0.0.10 generated on 2015-04-17 */
-/* DO NOT EDIT (use src/hwcrypto.js) */
+// JavaScript library as described in
+// https://github.com/open-eid/hwcrypto.js
 var hwcrypto = function hwcrypto() {
     "use strict";
     var _debug = function(x) {};

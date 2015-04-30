@@ -2,7 +2,7 @@
 
 This is a Demo webapp for digital signig with the combination of [hwcrypto.js](https://github.com/open-eid/hwcrypto.js/wiki) on the frontend and [DSS](https://github.com/esig/dss) on the backend.
 
- * License: LGPL 2.1
+ * License: MIT
  * &copy; Estonian Information System Authority
 
 1. requirements
