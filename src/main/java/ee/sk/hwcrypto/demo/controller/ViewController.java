@@ -1,7 +1,5 @@
 /**
- * DSS Hwcrypto Demo
- *
- * Copyright (c) 2015 Estonian Information System Authority
+ * DigiDoc4j Hwcrypto Demo
  *
  * The MIT License (MIT)
  *
@@ -25,21 +23,25 @@
  */
 package ee.sk.hwcrypto.demo.controller;
 
-import ee.sk.hwcrypto.demo.model.FileWrapper;
 import ee.sk.hwcrypto.demo.model.SigningSessionData;
+import org.apache.commons.io.IOUtils;
+import org.digidoc4j.Container;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Controller
 public class ViewController {
 
     private static final Logger log = LoggerFactory.getLogger(ViewController.class);
+    public static final String CONTAINER_MIME_TYPE = "application/vnd.etsi.asic-e+zip";
     @Autowired
     private SigningSessionData session;
 
@@ -50,11 +52,14 @@ public class ViewController {
 
     @RequestMapping("/downloadContainer")
     public void downloadContainer(HttpServletResponse response) {
-        FileWrapper file = session.getSignedFile();
-        response.setContentType(file.getMimeType());
-        response.setHeader("Content-Disposition", "attachment; filename=" + file.getFileName());
+        Container container = session.getContainer();
+        String fileName = container.getDataFiles().get(0).getName() + ".bdoc";
+        response.setContentType(CONTAINER_MIME_TYPE);
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
         try {
-            response.getOutputStream().write(file.getBytes());
+            InputStream containerStream = container.saveAsStream();
+            ServletOutputStream outputStream = response.getOutputStream();
+            IOUtils.copy(containerStream, outputStream);
             response.flushBuffer();
         } catch (IOException e) {
             log.error("Error Writing file content to output stream", e);

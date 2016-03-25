@@ -1,7 +1,5 @@
 /**
- * DSS Hwcrypto Demo
- *
- * Copyright (c) 2015 Estonian Information System Authority
+ * DigiDoc4j Hwcrypto Demo
  *
  * The MIT License (MIT)
  *

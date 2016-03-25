@@ -4,28 +4,34 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>ee.sk.hwcrypto</groupId>
-	<artifactId>dss-hwcrypto-webapp</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<artifactId>digidoc4j-hwcrypto-demo</artifactId>
+	<version>1.2-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<name>dss-hwcrypto-webapp</name>
-	<description>DSS webapp demo with hwcrypto</description>
+	<name>digidoc4j-hwcrypto-demo</name>
+	<description>DigiDoc4j webapp demo with hwcrypto</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.2.3.RELEASE</version>
+		<version>1.3.3.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<start-class>ee.sk.hwcrypto.demo.DssHwcryptoWebappApplication</start-class>
+		<start-class>ee.sk.hwcrypto.demo.DigiDoc4jWebApplication</start-class>
 		<java.version>1.8</java.version>
-		<dss.version>4.4.RC2</dss.version>
 	</properties>
 
 	<dependencies>
+		<!-- DigiDoc4j dependency -->
+		<dependency>
+			<groupId>org.digidoc4j</groupId>
+			<artifactId>digidoc4j</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
 		<!-- Spring BOOT dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -40,35 +46,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- Remove embedded tomcat from Spring BOOT configuration -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- DSS dependencies -->
-		<dependency>
-			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
-			<artifactId>dss-webservices-client</artifactId>
-			<version>${dss.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
-			<artifactId>dss-document</artifactId>
-			<version>${dss.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.europa.ec.joinup.sd-dss</groupId>
-			<artifactId>dss-spi</artifactId>
-			<version>${dss.version}</version>
-		</dependency>
-
 
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.6</version>
 		</dependency>
 	</dependencies>
 	
@@ -80,13 +62,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<repositories>
-		<repository>
-			<id>joinup</id>
-			<name>Joinup</name>
-			<url>https://joinup.ec.europa.eu/nexus/content/repositories/releases/</url>
-		</repository>
-	</repositories>
 
 </project>

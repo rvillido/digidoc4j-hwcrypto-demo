@@ -1,7 +1,5 @@
 /**
- * DSS Hwcrypto Demo
- *
- * Copyright (c) 2015 Estonian Information System Authority
+ * DigiDoc4j Hwcrypto Demo
  *
  * The MIT License (MIT)
  *
@@ -26,11 +24,13 @@
 package ee.sk.hwcrypto.demo.controller;
 
 import ee.sk.hwcrypto.demo.model.Digest;
-import ee.sk.hwcrypto.demo.model.FileWrapper;
 import ee.sk.hwcrypto.demo.model.Result;
 import ee.sk.hwcrypto.demo.model.SigningSessionData;
 import ee.sk.hwcrypto.demo.signature.FileSigner;
 import org.apache.commons.lang.StringUtils;
+import org.digidoc4j.Container;
+import org.digidoc4j.DataFile;
+import org.digidoc4j.DataToSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 
 @RestController
@@ -55,7 +56,12 @@ public class SigningController {
     public Result handleUpload(@RequestParam MultipartFile file) {
         log.debug("Handling file upload for file "+file.getOriginalFilename());
         try {
-            session.setUploadedFile(FileWrapper.create(file));
+            byte[] fileBytes = file.getBytes();
+            String fileName = file.getOriginalFilename();
+            String mimeType = file.getContentType();
+            DataFile dataFile = new DataFile(fileBytes, fileName, mimeType);
+            Container container = signer.createContainer(dataFile);
+            session.setContainer(container);
             return Result.resultOk();
         } catch (IOException e) {
             log.error("Error reading bytes from uploaded file " + file.getOriginalFilename(), e);
@@ -66,14 +72,16 @@ public class SigningController {
     @RequestMapping(value="/generateHash", method = RequestMethod.POST)
     public Digest generateHash(@RequestParam String certInHex) {
         log.debug("Generating hash from cert " + StringUtils.left(certInHex, 10) + "...");
-        session.setCertInHex(certInHex);
-        FileWrapper file = session.getUploadedFile();
+        Container container = session.getContainer();
         Digest digest = new Digest();
         try {
-            digest.setHex(signer.getDataToSign(file, certInHex));
+            DataToSign dataToSign = signer.getDataToSign(container, certInHex);
+            session.setDataToSign(dataToSign);
+            String dataToSignInHex = DatatypeConverter.printHexBinary(dataToSign.getDigestToSign());
+            digest.setHex(dataToSignInHex);
             digest.setResult(Result.OK);
-        } catch (FileSigner.HashCalculationException e) {
-            log.error("Error Calculating hash", e);
+        } catch (Exception e) {
+            log.error("Error Calculating data to sign", e);
             digest.setResult(Result.ERROR_GENERATING_HASH);
         }
         return digest;
@@ -82,9 +90,11 @@ public class SigningController {
     @RequestMapping(value="/createContainer", method = RequestMethod.POST)
     public Result createContainer(@RequestParam String signatureInHex) {
         log.debug("Creating container for signature " + StringUtils.left(signatureInHex, 10) + "...");
-        session.setSignatureInHex(signatureInHex);
+        DataToSign dataToSign = session.getDataToSign();
         try {
-            session.setSignedFile(signer.signDocument(signatureInHex));
+            Container container = session.getContainer();
+            signer.signContainer(container, dataToSign, signatureInHex);
+            session.setContainer(container);
             return Result.resultOk();
         } catch (Exception e) {
             log.error("Error Signing document", e);

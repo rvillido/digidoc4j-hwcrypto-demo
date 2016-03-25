@@ -1,7 +1,5 @@
 /**
- * DSS Hwcrypto Demo
- *
- * Copyright (c) 2015 Estonian Information System Authority
+ * DigiDoc4j Hwcrypto Demo
  *
  * The MIT License (MIT)
  *
@@ -31,14 +29,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class DssHwcryptoWebappApplication extends SpringBootServletInitializer {
+public class DigiDoc4jWebApplication extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(DssHwcryptoWebappApplication.class);
+        return application.sources(DigiDoc4jWebApplication.class);
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(DssHwcryptoWebappApplication.class, args);
+        SpringApplication.run(DigiDoc4jWebApplication.class, args);
     }
 }
